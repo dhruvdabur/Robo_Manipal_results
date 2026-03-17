@@ -523,17 +523,14 @@
         function revealResult() {
             if (!currentCandidate) return;
 
+            if (currentCandidate.selected) {
+                window.location.href = "test.html";
+                return;
+            }
+
             zone.style.display = "none";
             hint.style.display = "none";
             result.style.display = "block";
-
-            if (currentCandidate.selected) {
-                resultHeading.textContent = "Welcome to Robo Manipal!";
-                resultText.textContent = `${currentCandidate.name}, congratulations. You are selected for Robo Manipal.`;
-                resizeConfettiCanvas();
-                fireCelebration();
-                return;
-            }
 
             resultHeading.textContent = "Result Update";
             resultText.textContent = `${currentCandidate.name}, thank you for participating. You are not on the selected list this time.`;
@@ -577,14 +574,10 @@
             currentCandidate = candidate;
 
             if (candidate.selected) {
-                setMessage("Verification successful. Redirecting to the Robo Manipal Electronics page...", "ok");
-                setTimeout(() => {
-                    window.location.href = "test.html";
-                }, 900);
-                return;
+                setMessage("Verification successful. One quick question before moving ahead.", "ok");
+            } else {
+                setMessage("Verification complete.", "ok");
             }
-
-            setMessage("Verification complete.", "ok");
 
             selectedName.textContent = candidate.name;
             selectedSub.textContent = `Verified with ${candidate.email} - CGPA ${candidate.cgpa}.`;
