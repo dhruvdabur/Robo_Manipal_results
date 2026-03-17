@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Robo Manipal Result Announcement</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --bg1: #08111f;
+            --bg2: #101b35;
+            --card: rgba(10, 18, 37, 0.84);
+            --text: #eaf2ff;
+            --muted: #9fb0d3;
+            --accent: #43ffd1;
+            --accent-2: #6ea8ff;
+            --warn: #ffd86b;
+            --danger: #ff7a7a;
+            --ok: #78ffb1;
+            --shadow: rgba(0, 0, 0, 0.32);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100svh;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            overflow: hidden;
+            font-family: Inter, system-ui, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top, #153164 0%, transparent 35%),
+                radial-gradient(circle at bottom right, #0f5b58 0%, transparent 25%),
+                linear-gradient(135deg, var(--bg1), var(--bg2));
+        }
+
+        #confettiCanvas {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .card {
+            position: relative;
+            width: min(780px, 94vw);
+            padding: 28px 24px 30px;
+            border-radius: 28px;
+            text-align: center;
+            background: var(--card);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(14px);
+            box-shadow: 0 24px 70px var(--shadow);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            margin-bottom: 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #06111c;
+            background: linear-gradient(90deg, var(--accent), #9bffef);
+            box-shadow: 0 10px 30px rgba(67, 255, 209, 0.25);
+        }
+
+        .robot {
+            width: min(250px, 72vw);
+            display: block;
+            margin: 0 auto 8px;
+            filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.25));
+        }
+
+        h1 {
+            margin: 10px 0 8px;
+            font-size: clamp(30px, 5vw, 50px);
+            line-height: 1.05;
+        }
+
+        .sub {
+            margin: 0 auto 18px;
+            max-width: 640px;
+            color: var(--muted);
+            font-size: clamp(15px, 2.4vw, 18px);
+            line-height: 1.6;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: 800;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .verify-box {
+            width: min(460px, 100%);
+            margin: 24px auto 0;
+            padding: 20px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: left;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #dbe8ff;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .field input::placeholder {
+            color: #8ea0c5;
+        }
+
+        .field input:focus {
+            border-color: rgba(67, 255, 209, 0.65);
+            box-shadow: 0 0 0 4px rgba(67, 255, 209, 0.12);
+        }
+
+        .primary-btn,
+        .secondary-btn,
+        button {
+            border: none;
+            border-radius: 999px;
+            padding: 15px 24px;
+            font-size: 17px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+            transition: transform 0.14s ease, filter 0.14s ease, background 0.14s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .primary-btn:hover,
+        .secondary-btn:hover,
+        button:hover {
+            filter: brightness(1.05);
+        }
+
+        .primary-btn {
+            width: 100%;
+            margin-top: 8px;
+            background: linear-gradient(135deg, #39ffd0, #20c9ff);
+            color: #04101d;
+            box-sizing: border-box;
+            white-space: nowrap;
+        }
+
+        .secondary-btn {
+            background: linear-gradient(135deg, #ffd86b, #ffb343);
+            color: #2a1800;
+        }
+
+
+        .message {
+            margin-top: 14px;
+            min-height: 28px;
+            font-size: 15px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .message.ok {
+            color: var(--ok);
+        }
+
+        .message.error {
+            color: #ffb0b0;
+        }
+
+        .message.warn {
+            color: var(--warn);
+        }
+
+        .candidate-card {
+            margin: 16px auto 0;
+            padding: 16px;
+            max-width: 480px;
+            border-radius: 18px;
+            background: rgba(67, 255, 209, 0.08);
+            border: 1px solid rgba(67, 255, 209, 0.2);
+            text-align: left;
+        }
+
+        .candidate-card p {
+            margin: 8px 0;
+            color: #dce9ff;
+        }
+
+        .question {
+            margin: 20px 0 8px;
+            font-size: clamp(24px, 3.5vw, 34px);
+            font-weight: 900;
+        }
+
+        .button-zone {
+            position: relative;
+            width: min(560px, 94%);
+            height: 170px;
+            margin: 20px auto 10px;
+            border-radius: 24px;
+            border: 1px dashed rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.03);
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        button {
+            user-select: none;
+        }
+
+        .button-zone button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        #yesBtn {
+            left: 18%;
+            background: linear-gradient(135deg, #39ffd0, #20c9ff);
+            color: #04101d;
+        }
+
+        #noBtn {
+            left: 60%;
+            background: linear-gradient(135deg, #ffd86b, #ffb343);
+            color: #2a1800;
+        }
+
+        .hint {
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .result {
+            display: none;
+            margin-top: 22px;
+            padding: 18px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, rgba(67, 255, 209, 0.12), rgba(110, 168, 255, 0.12));
+            border: 1px solid rgba(67, 255, 209, 0.25);
+            animation: pop 0.32s ease;
+        }
+
+        .result h2 {
+            margin: 0 0 10px;
+            font-size: clamp(30px, 4vw, 44px);
+        }
+
+        .result p {
+            margin: 0;
+            color: #dbe8ff;
+            font-size: clamp(16px, 2.2vw, 18px);
+            line-height: 1.6;
+        }
+
+        .tiny {
+            margin-top: 12px;
+            font-size: 12px;
+            color: #93a2c5;
+        }
+
+        @keyframes pop {
+            from {
+                opacity: 0;
+                transform: scale(0.96);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .button-zone {
+                height: 220px;
+            }
+
+            #yesBtn {
+                left: 10%;
+            }
+
+            #noBtn {
+                left: 52%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="confettiCanvas"></canvas>
+
+    <main class="card">
+        <div class="badge">Robo Manipal 2026 - Result Verification</div>
+
+        <img class="robot" src="logo_dark.png" alt="Robo Manipal Logo" />
+
+        <section class="screen active" id="verifyScreen">
+            <h1>Robo Manipal Result Portal</h1>
+            <p class="sub">
+                Enter your <span class="highlight">name</span> and <span class="highlight">email</span> to verify your
+                result.
+            </p>
+
+            <div class="verify-box">
+                <div class="field">
+                    <label for="nameInput">Full name</label>
+                    <input id="nameInput" type="text" placeholder="Enter your name" autocomplete="name" />
+                </div>
+
+                <div class="field">
+                    <label for="emailInput">Email address</label>
+                    <input id="emailInput" type="email" placeholder="Enter your email" autocomplete="email" />
+                </div>
+
+                <button class="primary-btn" id="verifyBtn">Verify Result</button>
+                <div class="message" id="verifyMessage"></div>
+                <div class="candidate-card" id="candidateCard" style="display:none;"></div>
+            </div>
+        </section>
+
+        <section class="screen" id="selectedScreen">
+            <h1>Hi, <span class="highlight" id="selectedName">candidate</span></h1>
+            <p class="sub" id="selectedSub">
+                Your details are verified. Before we show your result, there is one quick question.
+            </p>
+
+            <div class="question">Do you want to be in the team?</div>
+
+            <section class="button-zone" id="zone">
+                <button id="yesBtn">Yes, of course</button>
+                <button id="noBtn">No</button>
+            </section>
+
+            <div class="hint" id="hint">The <strong>Yes</strong> button is way too excited to stay still 🤖</div>
+
+            <section class="result" id="result">
+                <h2 id="resultHeading">Result</h2>
+                <p id="resultText">
+                    Your result will appear here.
+                </p>
+                <div class="tiny">You can replace this with reporting time, mentor details, or next-round instructions.
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <script>
+        const candidates = [
+            { name: "Daivik", email: "daivikneogi1@gmail.com", cgpa: 8.3, selected: true },
+            { name: "Mohan", email: "mohangour140@gmail.com", cgpa: 8.0, selected: false },
+            { name: "Shiv", email: "shivanandmalik1@gmail.com", cgpa: 6.0, selected: false },
+            { name: "Smriti", email: "khuntia.smriti@gmail.com", cgpa: 7.9, selected: false },
+            { name: "Tanya", email: "toshisingh.0921@gmail.com", cgpa: 7.5, selected: true },
+            { name: "Krithvan", email: "krithvan@gmail.com", cgpa: 7.6, selected: false },
+            { name: "Nikunj", email: "nikunjs2008@gmail.com", cgpa: 8.91, selected: true },
+            { name: "Sutej", email: "sutejshetty07@gmail.com", cgpa: 9.9, selected: true },
+            { name: "Kapilmeet Singh", email: "kapilmeetsingh7@gmail.com", cgpa: 9.0, selected: true },
+            { name: "Jaishnu", email: "jaishnu.ixi@gmail.com", cgpa: 8.57, selected: true },
+            { name: "Prashanjith", email: "prashanjith9427@gmail.com", cgpa: 8.05, selected: false },
+            { name: "Aditya", email: "singhaladitya007@gmail.com", cgpa: 6.9, selected: false }
+        ];
+
+        const verifyScreen = document.getElementById("verifyScreen");
+        const selectedScreen = document.getElementById("selectedScreen");
+        const verifyBtn = document.getElementById("verifyBtn");
+        const nameInput = document.getElementById("nameInput");
+        const emailInput = document.getElementById("emailInput");
+        const verifyMessage = document.getElementById("verifyMessage");
+        const candidateCard = document.getElementById("candidateCard");
+        const selectedName = document.getElementById("selectedName");
+        const selectedSub = document.getElementById("selectedSub");
+        const resultHeading = document.getElementById("resultHeading");
+        const resultText = document.getElementById("resultText");
+
+        const zone = document.getElementById("zone");
+        const yesBtn = document.getElementById("yesBtn");
+        const noBtn = document.getElementById("noBtn");
+        const result = document.getElementById("result");
+        const hint = document.getElementById("hint");
+        const confettiCanvas = document.getElementById("confettiCanvas");
+        let currentCandidate = null;
+
+        function normalizeText(value) {
+            return value.toLowerCase().replace(/\s+/g, " ").trim();
+        }
+
+        function setMessage(text, type) {
+            verifyMessage.textContent = text;
+            verifyMessage.className = "message " + type;
+        }
+
+        function resizeConfettiCanvas() {
+            const dpr = Math.max(1, window.devicePixelRatio || 1);
+            confettiCanvas.width = Math.floor(window.innerWidth * dpr);
+            confettiCanvas.height = Math.floor(window.innerHeight * dpr);
+            confettiCanvas.style.width = "100vw";
+            confettiCanvas.style.height = "100vh";
+        }
+
+        resizeConfettiCanvas();
+        window.addEventListener("resize", resizeConfettiCanvas);
+        window.addEventListener("orientationchange", () => setTimeout(resizeConfettiCanvas, 150));
+
+        const confettiInstance = confetti.create(confettiCanvas, {
+            resize: false,
+            useWorker: true,
+        });
+
+        function fireCelebration() {
+            const end = Date.now() + 1500;
+
+            (function frame() {
+                confettiInstance({
+                    particleCount: 14,
+                    spread: 95,
+                    startVelocity: 48,
+                    ticks: 180,
+                    origin: { x: Math.random(), y: Math.random() * 0.4 },
+                });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            })();
+
+            setTimeout(() => {
+                confettiInstance({
+                    particleCount: 260,
+                    spread: 120,
+                    startVelocity: 60,
+                    ticks: 220,
+                    origin: { x: 0.5, y: 0.56 },
+                });
+            }, 250);
+        }
+
+        function clamp(n, min, max) {
+            return Math.max(min, Math.min(max, n));
+        }
+
+        function resetYesPosition() {
+            yesBtn.style.left = "18%";
+            yesBtn.style.top = "50%";
+            yesBtn.style.transform = "translateY(-50%)";
+        }
+
+        function moveYes(px, py) {
+            const z = zone.getBoundingClientRect();
+            const b = yesBtn.getBoundingClientRect();
+
+            let dx = (b.left + b.width / 2) - px;
+            let dy = (b.top + b.height / 2) - py;
+            let mag = Math.hypot(dx, dy) || 1;
+            dx /= mag;
+            dy /= mag;
+
+            let newLeft = (b.left - z.left) + dx * 150;
+            let newTop = (b.top - z.top) + dy * 150;
+
+            newLeft = clamp(newLeft, 0, z.width - b.width);
+            newTop = clamp(newTop, 0, z.height - b.height);
+
+            yesBtn.style.left = newLeft + "px";
+            yesBtn.style.top = newTop + "px";
+            yesBtn.style.transform = "none";
+        }
+
+        zone.addEventListener("pointermove", (e) => {
+            const b = yesBtn.getBoundingClientRect();
+            const d = Math.hypot(
+                (b.left + b.width / 2) - e.clientX,
+                (b.top + b.height / 2) - e.clientY
+            );
+
+            if (d < 145) {
+                moveYes(e.clientX, e.clientY);
+            }
+        });
+
+        yesBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+        });
+
+        function revealResult() {
+            if (!currentCandidate) return;
+
+            zone.style.display = "none";
+            hint.style.display = "none";
+            result.style.display = "block";
+
+            if (currentCandidate.selected) {
+                resultHeading.textContent = "Welcome to Robo Manipal!";
+                resultText.textContent = `${currentCandidate.name}, congratulations. You are selected for Robo Manipal.`;
+                resizeConfettiCanvas();
+                fireCelebration();
+                return;
+            }
+
+            resultHeading.textContent = "Result Update";
+            resultText.textContent = `${currentCandidate.name}, thank you for participating. You are not on the selected list this time.`;
+        }
+
+        noBtn.addEventListener("click", revealResult);
+
+        function showCandidateCard(candidate) {
+            candidateCard.style.display = "block";
+            candidateCard.innerHTML = `
+        <p><strong>Name:</strong> ${candidate.name}</p>
+        <p><strong>Email:</strong> ${candidate.email}</p>
+        <p><strong>CGPA:</strong> ${candidate.cgpa}</p>
+        <p><strong>Team:</strong> Robo Manipal</p>
+      `;
+        }
+
+        function verifyCandidate() {
+            const enteredName = normalizeText(nameInput.value);
+            const enteredEmail = normalizeText(emailInput.value);
+
+            candidateCard.style.display = "none";
+            candidateCard.innerHTML = "";
+
+            if (!enteredName || !enteredEmail) {
+                setMessage("Please enter both name and email.", "warn");
+                return;
+            }
+
+            const candidate = candidates.find((person) => {
+                return normalizeText(person.name) === enteredName && normalizeText(person.email) === enteredEmail;
+            });
+
+            if (!candidate) {
+                setMessage("No matching record found. Please check the entered name and email.", "error");
+                return;
+            }
+
+            showCandidateCard(candidate);
+
+            currentCandidate = candidate;
+
+            if (candidate.selected) {
+                setMessage("Verification successful. Redirecting to the Robo Manipal Electronics page...", "ok");
+                setTimeout(() => {
+                    window.location.href = "test.html";
+                }, 900);
+                return;
+            }
+
+            setMessage("Verification complete.", "ok");
+
+            selectedName.textContent = candidate.name;
+            selectedSub.textContent = `Verified with ${candidate.email} - CGPA ${candidate.cgpa}.`;
+            result.style.display = "none";
+            zone.style.display = "block";
+            hint.style.display = "block";
+            resetYesPosition();
+
+            setTimeout(() => {
+                verifyScreen.classList.remove("active");
+                selectedScreen.classList.add("active");
+            }, 900);
+        }
+
+        verifyBtn.addEventListener("click", verifyCandidate);
+
+        [nameInput, emailInput].forEach((input) => {
+            input.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") verifyCandidate();
+            });
+        });
+    </script>
+</body>
+
+</html>
