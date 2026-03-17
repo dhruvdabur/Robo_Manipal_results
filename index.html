@@ -300,6 +300,49 @@
             color: #93a2c5;
         }
 
+        .prank-box {
+            margin: 18px auto 0;
+            max-width: 640px;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+        }
+
+        .prank-title {
+            margin: 0 0 10px;
+            font-size: clamp(26px, 4vw, 38px);
+            line-height: 1.15;
+        }
+
+        .prank-text {
+            margin: 0;
+            color: #dbe8ff;
+            font-size: clamp(15px, 2.1vw, 18px);
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        .prank-actions {
+            margin-top: 16px;
+        }
+
+        .sad-note {
+            margin: 14px 0 0;
+            font-size: 14px;
+            color: #ffb0b0;
+            font-weight: 700;
+        }
+
+        .feedback-btn {
+            width: auto;
+            min-width: 170px;
+            padding: 10px 16px;
+            font-size: 14px;
+            border-radius: 12px;
+        }
+
         @keyframes pop {
             from {
                 opacity: 0;
@@ -384,6 +427,17 @@
                 </div>
             </section>
         </section>
+
+        <section class="screen" id="prankScreen">
+            <h1 class="prank-title" id="prankTitle">Sorry, you are not selected.</h1>
+            <div class="prank-box">
+                <p class="prank-text" id="prankText">Before you go, please share your feedback with us.</p>
+                <p class="sad-note" id="sadNote">This really hurts to share, but we couldn't shortlist you this time.</p>
+                <div class="prank-actions">
+                    <button class="primary-btn feedback-btn" id="feedbackBtn" type="button">Give Feedback</button>
+                </div>
+            </div>
+        </section>
     </main>
 
     <script>
@@ -404,6 +458,7 @@
 
         const verifyScreen = document.getElementById("verifyScreen");
         const selectedScreen = document.getElementById("selectedScreen");
+        const prankScreen = document.getElementById("prankScreen");
         const verifyBtn = document.getElementById("verifyBtn");
         const nameInput = document.getElementById("nameInput");
         const emailInput = document.getElementById("emailInput");
@@ -420,6 +475,10 @@
         const result = document.getElementById("result");
         const hint = document.getElementById("hint");
         const confettiCanvas = document.getElementById("confettiCanvas");
+        const prankTitle = document.getElementById("prankTitle");
+        const prankText = document.getElementById("prankText");
+        const sadNote = document.getElementById("sadNote");
+        const feedbackBtn = document.getElementById("feedbackBtn");
         let currentCandidate = null;
 
         function normalizeText(value) {
@@ -524,7 +583,14 @@
             if (!currentCandidate) return;
 
             if (currentCandidate.selected) {
-                window.location.href = "test.html";
+                verifyScreen.classList.remove("active");
+                selectedScreen.classList.remove("active");
+                prankScreen.classList.add("active");
+
+                prankTitle.textContent = "Sorry, you are not selected.";
+                prankText.textContent = "Before you go, please share your feedback with us.";
+                sadNote.style.display = "block";
+                feedbackBtn.style.display = "inline-block";
                 return;
             }
 
@@ -537,6 +603,19 @@
         }
 
         noBtn.addEventListener("click", revealResult);
+
+        feedbackBtn.addEventListener("click", () => {
+            prankTitle.textContent = "Just Kidding!";
+            prankText.textContent = `Congratulations! You made it into Team Robomanipal!
+
+We're excited to have you join our overambitious team of robotics engineers!`;
+            sadNote.style.display = "none";
+            feedbackBtn.style.display = "none";
+
+            setTimeout(() => {
+                window.location.href = "test.html";
+            }, 4800);
+        });
 
         function showCandidateCard(candidate) {
             candidateCard.style.display = "block";
@@ -588,6 +667,7 @@
 
             setTimeout(() => {
                 verifyScreen.classList.remove("active");
+                prankScreen.classList.remove("active");
                 selectedScreen.classList.add("active");
             }, 900);
         }
