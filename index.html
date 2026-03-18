@@ -382,14 +382,13 @@
         <section class="screen active" id="verifyScreen">
             <h1>Robo Manipal Result Portal</h1>
             <p class="sub">
-                Enter your <span class="highlight">name</span> and <span class="highlight">email</span> to verify your
-                result.
+                Enter your <span class="highlight">email</span> to verify your result.
             </p>
 
             <div class="verify-box">
                 <div class="field">
-                    <label for="nameInput">Full name</label>
-                    <input id="nameInput" type="text" placeholder="Enter your name" autocomplete="name" />
+                    <label for="nameInput">Name (optional)</label>
+                    <input id="nameInput" type="text" placeholder="Enter your name (optional)" autocomplete="name" />
                 </div>
 
                 <div class="field">
@@ -434,7 +433,7 @@
                 <p class="prank-text" id="prankText">Before you go, please share your feedback with us.</p>
                 <p class="sad-note" id="sadNote">This really hurts to share, but we couldn't shortlist you this time.</p>
                 <div class="prank-actions">
-                    <button class="primary-btn feedback-btn" id="feedbackBtn" type="button">Give Feedback</button>
+                    <button class="primary-btn feedback-btn" id="feedbackBtn" type="button">Get Feedback</button>
                 </div>
             </div>
         </section>
@@ -623,23 +622,22 @@ We're excited to have you join our overambitious team of robotics engineers!`;
         }
 
         function verifyCandidate() {
-            const enteredName = normalizeText(nameInput.value);
             const enteredEmail = normalizeText(emailInput.value);
 
             candidateCard.style.display = "none";
             candidateCard.innerHTML = "";
 
-            if (!enteredName || !enteredEmail) {
-                setMessage("Please enter both name and email.", "warn");
+            if (!enteredEmail) {
+                setMessage("Please enter your email.", "warn");
                 return;
             }
 
             const candidate = candidates.find((person) => {
-                return normalizeText(person.name) === enteredName && normalizeText(person.email) === enteredEmail;
+                return normalizeText(person.email) === enteredEmail;
             });
 
             if (!candidate) {
-                setMessage("No matching record found. Please check the entered name and email.", "error");
+                setMessage("No matching record found. Please check the entered email.", "error");
                 return;
             }
 
